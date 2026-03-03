@@ -3,6 +3,10 @@
 *.pdf
 **/.env
 .env*
+.env.example
+setup_folders*
+README.md
+walkthrough.md
 
 # Ignore Python cache
 __pycache__/
