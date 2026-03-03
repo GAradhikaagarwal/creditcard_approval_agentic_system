@@ -1,0 +1,8 @@
+# Ignore reference documents and environment files
+*.txt
+*.pdf
+.env
+
+# Ignore Python cache
+__pycache__/
+*.pyc
