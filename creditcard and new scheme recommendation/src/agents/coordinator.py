@@ -60,6 +60,8 @@ def retrieval_node(state: AgentState) -> AgentState:
     state["retrieved_policies"] = policies
     return state
 
+from src.explainability.decision_tracer import record_decision
+
 def decision_node(state: AgentState) -> AgentState:
     logger.info("--- NODE: Decision (LLM Evaluation) ---")
     if state.get("errors"):
@@ -78,6 +80,16 @@ def decision_node(state: AgentState) -> AgentState:
         state["recommended_product_id"] = decision_obj.product_id
         state["evaluated_rule_ids"] = decision_obj.rule_ids_evaluated
         
+        # Persist the decision trace directly to Neo4j
+        if decision_obj.product_id:
+            record_decision(
+                customer_id=state["customer_id"],
+                product_id=decision_obj.product_id,
+                decision_outcome=decision_obj.decision,
+                rationale=decision_obj.rationale,
+                evaluated_rule_ids=decision_obj.rule_ids_evaluated
+            )
+            
     except Exception as e:
         logger.error(f"Decision node failed: {e}")
         state["errors"].append(f"LLM Decision failed: {str(e)}")
